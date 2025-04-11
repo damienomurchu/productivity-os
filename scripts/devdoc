@@ -2,9 +2,9 @@
 
 # === CONFIG ===
 NOTES_DIR=~/notes                                # Base notes directory
-MODEL_NAME="mistral"                             # Local LLM model via Ollama
+MODEL_NAME="gemma3:12b"                          # Local LLM model via Ollama
 CHEAT_PATH="$HOME/.config/cheat/cheatsheets/personal"
-LOG_FILE="$NOTES_DIR/ai_logs/ollama_journal.md"  # Rolling AI query log file
+LOG_FILE="$NOTES_DIR/ai_logs.md"  # Rolling AI query log file
 
 # === QUERY ===
 QUERY="$*"                                       # Capture entire input as the query string
@@ -48,7 +48,8 @@ EOF
 
 # === DISPLAY RESPONSE ===
 echo -e "\n\033[1;32m💬 [LLM Response with Syntax Highlighting]\033[0m"
-echo "$RESPONSE" | bat --language=markdown --style=plain --paging=never
+echo "$RESPONSE" | bat --language=markdown --style=plain --paging=neverls
+
 # Highlighted output to terminal using bat (as markdown for formatting)
 
 # === SAVE TO ROLLING LOG (PREPEND TO TOP) ===
