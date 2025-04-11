@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# === CONFIG ===
+NOTES_DIR=~/notes                                # Base notes directory
+MODEL_NAME="mistral"                             # Local LLM model via Ollama
+CHEAT_PATH="$HOME/.config/cheat/cheatsheets/personal"
+LOG_FILE="$NOTES_DIR/ai_logs/ollama_journal.md"  # Rolling AI query log file
+
+# === QUERY ===
+QUERY="$*"                                       # Capture entire input as the query string
+KEYWORD=$(echo "$QUERY" | awk '{print $1}')      # Grab first word as rough topic for cheatsheets
+
+# === CHEAT SHEET LOOKUP ===
+echo -e "\033[1;34m🔍 [cheat: $KEYWORD]\033[0m"
+if cheat "$KEYWORD" &>/dev/null; then
+  cheat "$KEYWORD"                               # Show cheat sheet if it exists
+else
+  echo "(no cheat found)"                        # Otherwise, print fallback
+fi
+
+# === TLDR LOOKUP ===
+echo -e "\n\033[1;36m🔎 [tldr: $KEYWORD]\033[0m"
+if ! tldr "$KEYWORD" &>/dev/null; then
+  echo "(no tldr found)"                         # Show tldr summary if available
+fi
+
+# === NOTE SEARCH ===
+echo -e "\n\033[1;33m📁 [Searching your notes...]\033[0m"
+rg --no-heading --color=always -C 3 "$QUERY" "$NOTES_DIR" | bat --style=plain --paging=never
+# Search personal notes for the query (3 lines of context), pipe through bat for pretty output
+
+# === PREP CONTEXT FOR LLM ===
+echo -e "\n\033[1;35m🤖 [Asking $MODEL_NAME via Ollama...]\033[0m"
+CONTEXT=$(rg -C 5 "$QUERY" "$NOTES_DIR" | head -n 300)
+# Grab up to 300 lines of context from notes for LLM input
+
+# === QUERY LLM ===
+RESPONSE=$(ollama run "$MODEL_NAME" <<EOF
+You are a helpful developer assistant. The user asked: "$QUERY"
+
+Use this context from their personal notes if it helps:
+
+$CONTEXT
+
+Answer the query in a clear, practical way:
+EOF
+)
+
+# === DISPLAY RESPONSE ===
+echo -e "\n\033[1;32m💬 [LLM Response with Syntax Highlighting]\033[0m"
+echo "$RESPONSE" | bat --language=markdown --style=plain --paging=never
+# Highlighted output to terminal using bat (as markdown for formatting)
+
+# === SAVE TO ROLLING LOG (PREPEND TO TOP) ===
+mkdir -p "$(dirname "$LOG_FILE")"  # Make sure log dir exists
+
+# Format the new log entry
+NEW_ENTRY=$(cat <<EOF
+## $(date '+%Y-%m-%d %H:%M:%S')
+**Query:** $QUERY
+
+$RESPONSE
+
+---
+
+EOF
+)
+
+# Prepend to log file
+TMPFILE=$(mktemp)
+{
+  echo "$NEW_ENTRY"
+  cat "$LOG_FILE" 2>/dev/null
+} > "$TMPFILE" && mv "$TMPFILE" "$LOG_FILE"
+
+echo -e "\n📁 Response prepended to: $LOG_FILE"
+

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# === CONFIG ===
+# Path to your personal dev log file
+LOGFILE="$HOME/devlog.txt"
+
+# === ENTRY INPUT ===
+# Exit if no input provided
+if [ $# -eq 0 ]; then
+    echo "Usage: tlog <entry text>"
+    exit 1
+fi
+
+# Format the entry with a timestamp
+ENTRY="$(date '+%Y-%m-%d %H:%M') - $*"
+
+# === ENSURE LOG FILE EXISTS ===
+# Create the log file if it doesn't exist
+touch "$LOGFILE"
+
+# === TEMP FILE HANDLING ===
+# Create a temporary file to build the new log content
+TMPFILE=$(mktemp)
+
+# Write the new entry at the top, then append existing log content
+{
+    echo "$ENTRY"      # the new log entry
+    echo               # blank line for spacing
+    cat "$LOGFILE"     # existing entries
+} > "$TMPFILE"
+
+# Replace the original log file with the updated version
+mv "$TMPFILE" "$LOGFILE"
+
+# === DONE ===
+echo "✅ Entry added to $LOGFILE"
