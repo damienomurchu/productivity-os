@@ -13,9 +13,9 @@ This repo is my personal productivity and tooling knowledge base. It's where I s
 | `/tools/`       | CLI utilities, services, APIs, SaaS tools I use or have tested |
 | `/tips-tricks/` | One-liners, shell hacks, git wizardry, Docker shortcuts, etc |
 | `/scripts/`     | Reusable scripts for repetitive or annoying tasks |
-| `/playbooks/`   | Repeatable workflows and step-by-step processes |
+| `/runbooks/`   | Repeatable workflows and step-by-step processes |
 | `/frameworks/`  | My productivity systems: GTD, timeboxing, pomodoro tweaks, etc |
-| `/journal/`     | Logs of experiments, tool reviews, personal wins/fails |
+| `/journals/`     | Logs of experiments, tool reviews, personal wins/fails |
 | `/dotfiles/`    | Shell, git, and tmux config I can't live without |
 | `/README.md`    | You’re here. Welcome to the rabbit hole. |
 
@@ -35,5 +35,5 @@ This repo is my personal productivity and tooling knowledge base. It's where I s
 Clone the repo and explore:
 
 ```bash
-git clone git@github.com:yourname/productivity-os.git
+git clone git@github.com:damienomurchu/productivity-os.git
 cd productivity-os
