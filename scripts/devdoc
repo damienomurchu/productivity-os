@@ -48,7 +48,7 @@ EOF
 
 # === DISPLAY RESPONSE ===
 echo -e "\n\033[1;32m💬 [LLM Response with Syntax Highlighting]\033[0m"
-echo "$RESPONSE" | bat --language=markdown --style=plain --paging=neverls
+echo "$RESPONSE" | bat --language=markdown --style=plain --paging=never
 
 # Highlighted output to terminal using bat (as markdown for formatting)
 

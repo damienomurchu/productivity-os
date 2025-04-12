@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Check for empty input
+if [ $# -eq 0 ]; then
+  echo "Usage: llm-query <your prompt>"
+  exit 1
+fi
+
+# Combine all args into one prompt
+prompt="$*"
+
+# Send prompt to Ollama
+echo "$prompt" | ollama run gemma3:12b
